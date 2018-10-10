@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Scoreboard</title>
+<style type="text/css">
+.control {
+	display: inline;
+}
+
+body {
+	top: 0;
+	left: 0;
+	width: 95%;
+	height: 100%;
+	background: white;
+	color: black;
+	padding: 1em;
+	text-align: center;
+}
+
+#leftTeam, #rightTeam {
+	display: inline-block;
+}
+
+#leftTeam {
+	float: left;
+}
+
+#rightTeam {
+	float: right;
+}
+
+#leftTotal, #rightTotal {
+	display: block;
+	min-width: 100px;
+	min-height: 100px;
+	background: white;
+	color: black;
+	font-size: 100px;
+}
+
+</style>
+<script>
+function updateDisplay() {
+	var left = document.getElementById("leftTeam");
+	left.getElementsByClassName("name") = localStorage.left.name;
+	left.getElementsByClassName("score") = localStorage.left.score;
+
+	var right = document.getElementById("rightTeam");
+	right.getElementsByClassName("name") = localStorage.right.name;
+	right.getElementsByClassName("score") = localStorage.right.score;
+
+	timer = window.setInterval(updateDisplay, 500);
+}
+
+function addOne() { localStorage.leftTotal++; }
+function subOne() { localStorage.leftTotal--; }
+
+function reset() {
+	localStorage.leftTotal = 0;
+	localStorage.rightTotal = 0;
+	localStorage.leftTeamName = "Home Team/High Seed";
+	localStorage.rightTeamName = "Visiting Team/Low Seed";
+}
+
+function editTeamName() {
+	console.log(this);
+}
+
+function init() {
+	if (!localStorage.leftTotal) {
+		reset();
+	}
+
+	if (document.location.hash == "#display") {
+		for (var i in document.styleSheets[0].rules) {
+			console.log("testing styleSheets[" + i + "]");
+			if (document.styleSheets[0].rules[i].selectorText == ".control") {
+				document.styleSheets[0].rules[i].style.display = "none";
+			}
+		}
+		document.getElementsByTagName("body")[0].style.background = "black";
+		document.getElementsByTagName("body")[0].style.color = "white";
+	} else {
+		document.getElementById("leftTeamName").onclick = editTeamName;
+		document.getElementById("rightTeamName").onclick = editTeamName;
+	}
+
+	window.timer = window.setInterval(updateDisplay, 500);
+}
+</script>
+</head>
+<body onload="init();">
+<div class="control">Open the <a href="#display" target="_blank">display</a> in a new window.<br></div>
+
+<div id="leftTeam">
+<span id="score"></span>
+<span id="name"></span>
+<span class="control">
+	<a href="javascript:subOne();">-1</a>
+	<a href="javascript:addOne();">+1</a>
+</span>
+</div>
+
+<div id="rightTeam">
+<span class="name"></span>
+<span class="score"></span>
+<span class="control">
+	<a href="javascript:subOne();">-1</a>
+	<a href="javascript:addOne();">+1</a>
+</span>
+</div>
+
+<div id="timing">
+<span id="periodTime"></span>
+<span id="jamTime"></span>
+<span id="lineupTime"></span>
+</div>
+
+<a href="javascript:("window.clearInterval(window.timer);">Stop timer</a>
+
+</div>
+</body>
+</html>
