@@ -18,19 +18,19 @@ body {
 	text-align: center;
 }
 
-#leftTeam, #rightTeam {
+#left, #right {
 	display: inline-block;
 }
 
-#leftTeam {
+#left {
 	float: left;
 }
 
-#rightTeam {
+#right {
 	float: right;
 }
 
-#leftTotal, #rightTotal {
+.score {
 	display: block;
 	min-width: 100px;
 	min-height: 100px;
@@ -42,25 +42,35 @@ body {
 </style>
 <script>
 function updateDisplay() {
-	var left = document.getElementById("leftTeam");
-	left.getElementsByClassName("name") = localStorage.left.name;
-	left.getElementsByClassName("score") = localStorage.left.score;
+	var left = document.getElementById("left");
+	left.getElementsByClassName("name")[0].innerHTML = localStorage.leftName;
+	left.getElementsByClassName("score")[0].innerHTML = localStorage.leftScore;
 
-	var right = document.getElementById("rightTeam");
-	right.getElementsByClassName("name") = localStorage.right.name;
-	right.getElementsByClassName("score") = localStorage.right.score;
+	var right = document.getElementById("right");
+	right.getElementsByClassName("name")[0].innerHTML = localStorage.rightName;
+	right.getElementsByClassName("score")[0].innerHTML = localStorage.rightScore;
 
 	timer = window.setInterval(updateDisplay, 500);
 }
 
-function addOne() { localStorage.leftTotal++; }
-function subOne() { localStorage.leftTotal--; }
+function updateScore(e, n) {
+	var id = e.id;
+	while (!id) {
+		e = e.parentElement;
+		id = e.id;
+	}
+	localStorage[id + "Score"] = parseInt(localStorage[id + "Score"]) + parseInt(n);
+	if (localStorage[id + "Score"] < 0) {
+		localStorage[id + "Score"] = 0;
+	}
+}
 
 function reset() {
-	localStorage.leftTotal = 0;
-	localStorage.rightTotal = 0;
-	localStorage.leftTeamName = "Home Team/High Seed";
-	localStorage.rightTeamName = "Visiting Team/Low Seed";
+	localStorage.leftScore = 0;
+	localStorage.leftName = "Home Team/High Seed";
+
+	localStorage.rightScore = 0;
+	localStorage.rightName = "Visiting Team/Low Seed";
 }
 
 function editTeamName() {
@@ -68,7 +78,7 @@ function editTeamName() {
 }
 
 function init() {
-	if (!localStorage.leftTotal) {
+	if (!localStorage.leftName) {
 		reset();
 	}
 
@@ -82,32 +92,34 @@ function init() {
 		document.getElementsByTagName("body")[0].style.background = "black";
 		document.getElementsByTagName("body")[0].style.color = "white";
 	} else {
-		document.getElementById("leftTeamName").onclick = editTeamName;
-		document.getElementById("rightTeamName").onclick = editTeamName;
+		var names = document.getElementsByClassName("name");
+		for (var i = 0; i < names.size; i++) {
+			names[i].onclick = editTeamName;
+		}
 	}
 
-	window.timer = window.setInterval(updateDisplay, 500);
+	updateDisplay();
 }
 </script>
 </head>
 <body onload="init();">
 <div class="control">Open the <a href="#display" target="_blank">display</a> in a new window.<br></div>
 
-<div id="leftTeam">
-<span id="score"></span>
-<span id="name"></span>
+<div id="left">
+<span class="name">Home Team/High Seed</span>
+<span class="score"></span>
 <span class="control">
-	<a href="javascript:subOne();">-1</a>
-	<a href="javascript:addOne();">+1</a>
+	<a class="control" onclick="updateScore(this, -1)">-1</a>
+	<a class="control" onclick="updateScore(this, 1)">+1</a>
 </span>
 </div>
 
-<div id="rightTeam">
-<span class="name"></span>
+<div id="right">
+<span class="name">Visiting Team/Low Seed</span>
 <span class="score"></span>
 <span class="control">
-	<a href="javascript:subOne();">-1</a>
-	<a href="javascript:addOne();">+1</a>
+	<a class="control" onclick="updateScore(this, -1)">-1</a>
+	<a class="control" onclick="updateScore(this, 1)">+1</a>
 </span>
 </div>
 
@@ -117,7 +129,10 @@ function init() {
 <span id="lineupTime"></span>
 </div>
 
+<span class="control">
 <a href="javascript:("window.clearInterval(window.timer);">Stop timer</a>
+<a href="javascript:reset();updateDisplay();">Reset</a>
+</span>
 
 </div>
 </body>
