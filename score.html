@@ -69,11 +69,23 @@ input {
 }
 
 input[type=checkbox] {
-	color: red;
+	display: block;
+}
+
+#left .timeouts {
+	float: left;
+}
+
+#right .timeouts {
+	float: right;
+}
+
+input[type=button] {
+	border: initial;
 }
 
 .timeouts {
-	display: block;
+	display: inline;
 	
 }
 
@@ -220,43 +232,47 @@ function init() {
 <div class="control">Open the <a href="#display" target="_blank">display</a> in a new window.<br></div>
 
 <div id="left">
-<input type="text" class="name">
-<span class="timeouts">
-	<input type="checkbox" class="to">
-	<input type="checkbox" class="to">
-	<input type="checkbox" class="to">
-	<input type="checkbox" class="or">
-</span>
-<input type="text" class="score">
-<span class="control">
-	<a class="control" onclick="updateScore(this, -1)">-1</a>
-	<a class="control" onclick="updateScore(this, 1)">+1</a>
-</span>
+	<input type="text" class="name">
+	<input type="text" class="score">
+	<span class="timeouts">
+		<input type="checkbox" class="to">
+		<input type="checkbox" class="to">
+		<input type="checkbox" class="to">
+		<input type="checkbox" class="or">
+	</span>
+	<span class="control">
+		<a onclick="updateScore(this, -1)">-1</a>
+		<a onclick="updateScore(this, 1)">+1</a>
+	</span>
 </div>
 
 <div id="right">
-<input type="text" class="name">
-<span class="timeouts">
-	<input type="checkbox" class="to">
-	<input type="checkbox" class="to">
-	<input type="checkbox" class="to">
-	<input type="checkbox" class="or">
-</span>
-<input type="text" class="score">
-<span class="control">
-	<a class="control" onclick="updateScore(this, -1)">-1</a>
-	<a class="control" onclick="updateScore(this, 1)">+1</a>
-</span>
+	<input type="text" class="name">
+	<input type="text" class="score">
+	<span class="timeouts">
+		<input type="checkbox" class="to">
+		<input type="checkbox" class="to">
+		<input type="checkbox" class="to">
+		<input type="checkbox" class="or">
+	</span>
+	<span class="control">
+		<a onclick="updateScore(this, -1)">-1</a>
+		<a onclick="updateScore(this, 1)">+1</a>
+	</span>
 </div>
 
 <div id="timing">
 	<div id="period">
-		<input type="button" class="control" value="-" onclick="decPeriod();"><input class="number"><input type="button" class="control" value="+" onclick="incPeriod();">
+		<input type="button" class="control" value="-" onclick="decPeriod();">
+		<input class="number">
+		<input type="button" class="control" value="+" onclick="incPeriod();">
 		<input class="time">
 	</div>
 
 	<div id="jam">
-		<input type="button" class="control" value="-" onclick="decJam();"><input class="number"><input type="button" class="control" value="+" onclick="incJam();">
+		<input type="button" class="control" value="-" onclick="decJam();">
+		<input class="number">
+		<input type="button" class="control" value="+" onclick="incJam();">
 		<input class="time">
 	</div>
 </div>
