@@ -18,21 +18,22 @@ body {
 	text-align: center;
 }
 
-#left, #right {
+#left, #right, #period, #jam {
 	display: inline-block;
 	max-width: 45%;
 }
 
-#left {
+#left, #period {
 	float: left;
 }
 
-#right {
+#right, #jam {
 	float: right;
 }
 
-#timing {
+#period {
 	clear: both;
+	bottom: 0;
 }
 
 .score {
@@ -139,6 +140,13 @@ function updateField() {
 	
 }
 
+function interactiveReset() {
+	if (confirm("Are you sure you want to reset the entire scoreboard?")) {
+		reset();
+	}
+	updateDisplay();
+}
+
 function init() {
 	if (!localStorage.leftName) {
 		reset();
@@ -200,25 +208,24 @@ function init() {
 </span>
 </div>
 
-<div id="period">
-<input class="number"></input>
-<input class="time"></input>
-</div>
+<div id="timing">
+	<div id="period">
+		<input class="number"></input>
+		<input class="time"></input>
+	</div>
 
-<div id="jam">
-<input class="number"></input>
-<input class="time"></input>
+	<div id="jam">
+		<input class="number"></input>
+		<input class="time"></input>
+	</div>
 </div>
 
 <div class="control">
-<input type="button" value="Start Jam" onclick="startJam();">
-<input type="button" value="End Jam" onclick="endJam();">
-<input type="button" value="Time Out" onclick="timeOut();">
+	<input type="button" value="Start Jam" onclick="startJam();">
+	<input type="button" value="End Jam" onclick="endJam();">
+	<input type="button" value="Time Out" onclick="timeOut();">
+	<input type="button" value="Reset Everything" onclick="interactiveReset();">
 </div>
-
-<span class="control">
-<a href="javascript:reset(); updateDisplay();">Reset</a>
-</span>
 
 </div>
 </body>
