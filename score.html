@@ -61,6 +61,10 @@ input {
 
 </style>
 <script>
+function startJam() {
+	
+}
+
 function updateTeam(t) {
 	var team = document.getElementById(t);
 	team.getElementsByClassName("name")[0].value = localStorage[t + "Name"];
@@ -72,15 +76,28 @@ function updateTeam(t) {
 	team.getElementsByClassName("or")[0].checked = localStorage[t + "OfficialReview"];
 }
 
+function formatTime(t) {
+	var minutes = t / 60;
+	var seconds = t % 60;
+	return minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+}
+
 function updateDisplay() {
 	updateTeam("left");
 	updateTeam("right");
-	document.getElementById("period").value = localStorage.period;
-	document.getElementById("periodTime").value = localStorage.periodTime;
-	document.getElementById("jam").value = localStorage.jam;
-	document.getElementById("jamTime").value = localStorage.jamTime;
-	document.getElementById("lineupTime").value = localStorage.lineupTime;
-	timer = window.setInterval(updateDisplay, 500);
+
+	var p = document.getElementById("period");
+	p.getElementsByClassName("number")[0].value = "Period " + localStorage.period;
+	p.getElementsByClassName("time")[0].value = formatTime(localStorage.periodTime);
+
+	var j = document.getElementById("jam");
+	if (localStorage.jamTime > 0) {
+		j.getElementsByClassName("number")[0].value = "Jam " + localStorage.jam;
+		j.getElementsByClassName("time")[0].value = formatTime(localStorage.jamTime);
+	} else {
+		j.getElementsByClassName("number")[0].value = "Lineup for Jam " + localStorage.jam;
+		j.getElementsByClassName("time")[0].value = formatTime(localStorage.lineupTime);
+	}
 }
 
 function getTeam(e) {
@@ -128,10 +145,10 @@ function init() {
 	}
 
 	if (document.location.hash == "#display") {
-		for (var i in document.styleSheets[0].rules) {
-			console.log("testing styleSheets[" + i + "]");
-			if (document.styleSheets[0].rules[i].selectorText == ".control") {
-				document.styleSheets[0].rules[i].style.display = "none";
+		var css = document.styleSheets[0].rules;
+		for (var i in css) {
+			if (css[i].selectorText == ".control") {
+				css[i].style.display = "none";
 			}
 		}
 		document.getElementsByTagName("body")[0].style.background = "black";
@@ -146,6 +163,7 @@ function init() {
 	}
 
 	updateDisplay();
+	timer = window.setInterval(updateDisplay, 100);
 }
 </script>
 </head>
@@ -182,18 +200,24 @@ function init() {
 </span>
 </div>
 
-<div id="timing">
-Period: <input id="period"></input>
-<input id="periodTime"></input>
-<br>
-Jam:<input id="jam"></input>
-<input id="jamTime"></input>
-<input id="lineupTime"></input>
+<div id="period">
+<input class="number"></input>
+<input class="time"></input>
+</div>
+
+<div id="jam">
+<input class="number"></input>
+<input class="time"></input>
+</div>
+
+<div class="control">
+<input type="button" value="Start Jam" onclick="startJam();">
+<input type="button" value="End Jam" onclick="endJam();">
+<input type="button" value="Time Out" onclick="timeOut();">
 </div>
 
 <span class="control">
-<a href="javascript:("window.clearInterval(window.timer);">Stop timer</a>
-<a href="javascript:reset();updateDisplay();">Reset</a>
+<a href="javascript:reset(); updateDisplay();">Reset</a>
 </span>
 
 </div>
