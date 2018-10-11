@@ -31,6 +31,10 @@ body {
 	float: right;
 }
 
+#timing {
+	clear: both;
+}
+
 .score {
 	display: block;
 	min-width: 100px;
@@ -71,6 +75,11 @@ function updateTeam(t) {
 function updateDisplay() {
 	updateTeam("left");
 	updateTeam("right");
+	document.getElementById("period").value = localStorage.period;
+	document.getElementById("periodTime").value = localStorage.periodTime;
+	document.getElementById("jam").value = localStorage.jam;
+	document.getElementById("jamTime").value = localStorage.jamTime;
+	document.getElementById("lineupTime").value = localStorage.lineupTime;
 	timer = window.setInterval(updateDisplay, 500);
 }
 
@@ -101,6 +110,11 @@ function resetTeam(t, name) {
 function reset() {
 	resetTeam("left", "Home Team/High Seed");
 	resetTeam("right", "Visiting Team/Low Seed");
+	localStorage.period = 1;
+	localStorage.jam = 1;
+	localStorage.periodTime = 30 * 60;
+	localStorage.jamTime = 120;
+	localStorage.lineupTime = 30;
 }
 
 function updateField() {
@@ -169,7 +183,10 @@ function init() {
 </div>
 
 <div id="timing">
+Period: <input id="period"></input>
 <input id="periodTime"></input>
+<br>
+Jam:<input id="jam"></input>
 <input id="jamTime"></input>
 <input id="lineupTime"></input>
 </div>
