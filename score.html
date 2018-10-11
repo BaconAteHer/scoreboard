@@ -52,6 +52,7 @@ input {
 
 .timeouts {
 	display: block;
+	
 }
 
 </style>
@@ -60,6 +61,11 @@ function updateTeam(t) {
 	var team = document.getElementById(t);
 	team.getElementsByClassName("name")[0].value = localStorage[t + "Name"];
 	team.getElementsByClassName("score")[0].value = localStorage[t + "Score"];
+	var to = team.getElementsByClassName("to");
+	for (var i = 0; i < to.length; i++) {
+		to[i].checked = i < localStorage[t + "Timeouts"];
+	}
+	team.getElementsByClassName("or")[0].checked = localStorage[t + "OfficialReview"];
 }
 
 function updateDisplay() {
@@ -88,6 +94,8 @@ function updateScore(e, n) {
 function resetTeam(t, name) {
 	localStorage[t + "Score"] = 0;
 	localStorage[t + "Name"] = name;
+	localStorage[t + "Timeouts"] = 3;
+	localStorage[t + "OfficialReview"] = true;
 }
 
 function reset() {
