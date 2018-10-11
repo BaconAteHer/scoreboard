@@ -12,7 +12,7 @@ body {
 	left: 0;
 	width: 95%;
 	height: 100%;
-	background: white;
+	background: lightgray;
 	color: black;
 	padding: 1em;
 	text-align: center;
@@ -43,6 +43,7 @@ body {
 	background: white;
 	color: black;
 	margin: 0;
+	border-radius: .5em;
 }
 
 .time {
@@ -50,16 +51,14 @@ body {
 	min-width: 100px;
 	min-height: 100px;
 	font-size: 50px;
-	border: thin solid white;
 	margin: 0;
 }
 
 .score {
-	min-width: 100px;
-	min-height: 100px;
 	background: white;
 	color: black;
 	font-size: 100px;
+	border-radius: .25em;
 }
 
 input, select, output {
@@ -222,6 +221,7 @@ function init() {
 		var inputs = document.getElementsByTagName("input");
 		for (var i = 0; i < inputs.length; i++) {
 			inputs[i].oninput = updateField;
+			inputs[i].disabled = false;
 		}
 	}
 
@@ -233,29 +233,29 @@ function init() {
 <div class="control">Open the <a href="#display" target="_blank">display</a> in a new window.<br></div>
 
 <div id="team1">
-	<output class="name" id="team1Name"></output>
-	<input type="text" class="score" id="team1Score">
+	<output class="name" id="team1Name"></output><br>
+
+	<button class="control" onclick="updateScore(this, -1)">-1</button>
+	<input type="text" class="score" id="team1Score" disabled>
+	<button class="control" onclick="updateScore(this, 1)">+1</button>
+
 	<span class="timeouts">
-		<input type="checkbox" class="to">
-		<input type="checkbox" class="to">
-		<input type="checkbox" class="to">
-		<input type="checkbox" class="or">
+		<input type="checkbox" class="to" disabled>
+		<input type="checkbox" class="to" disabled>
+		<input type="checkbox" class="to" disabled>
+		<input type="checkbox" class="or" disabled>
 	</span>
 	<label class="control">Jammer: </label><select class="jammer"></select>
-	<span class="control">
-		<button onclick="updateScore(this, -1)">-1</button>
-		<button onclick="updateScore(this, 1)">+1</button>
-	</span>
 </div>
 
 <div id="team2">
 	<output class="name" id="team2Name"></output>
-	<input type="text" class="score" id="team2Score">
+	<input type="text" class="score" id="team2Score" disabled>
 	<span class="timeouts">
-		<input type="checkbox" class="to">
-		<input type="checkbox" class="to">
-		<input type="checkbox" class="to">
-		<input type="checkbox" class="or">
+		<input type="checkbox" class="to" disabled>
+		<input type="checkbox" class="to" disabled>
+		<input type="checkbox" class="to" disabled>
+		<input type="checkbox" class="or" disabled>
 	</span>
 	<label class="control">Jammer: </label><select class="jammer"></select>
 	<span class="control">
@@ -270,7 +270,7 @@ function init() {
 			<button class="control" onclick="decPeriod();">-</button>
 			<output class="number"></output><button class="control" onclick="incPeriod();">+</button>
 		</h2>
-		<output class="time"></output>
+		<output type="time" class="time"></output>
 	</div>
 
 	<div id="jam">
@@ -278,7 +278,7 @@ function init() {
 			<button class="control" onclick="decJam();">-</button>
 			<output class="number"></output><button class="control" onclick="incJam();">+</button>
 		</h2>
-		<output class="time"></output>
+		<output type="time" class="time"></output>
 	</div>
 </div>
 
