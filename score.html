@@ -85,16 +85,14 @@ function updateScore(e, n) {
 	}
 }
 
-function reset() {
-	localStorage.leftScore = 0;
-	localStorage.leftName = "Home Team/High Seed";
-
-	localStorage.rightScore = 0;
-	localStorage.rightName = "Visiting Team/Low Seed";
+function resetTeam(t, name) {
+	localStorage[t + "Score"] = 0;
+	localStorage[t + "Name"] = name;
 }
 
-function editField() {
-	console.log(this);
+function reset() {
+	resetTeam("left", "Home Team/High Seed");
+	resetTeam("right", "Visiting Team/Low Seed");
 }
 
 function updateField() {
