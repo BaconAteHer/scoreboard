@@ -18,28 +18,31 @@ body {
 	text-align: center;
 }
 
-#left, #right, #period, #jam {
+#team1, #team2, #period, #jam {
 	display: inline-block;
-	max-width: 45%;
+	width: 45%;
 }
 
-#left, #period {
+#team1, #period {
 	float: left;
 }
 
-#right, #jam {
+#team2, #jam {
 	float: right;
 }
 
 #timing {
+	width: 95%;
 	position: absolute;
 	clear: both;
 	bottom: 0;
+	padding: 0;
 }
 
-.number {
+#timing h2 {
 	background: white;
 	color: black;
+	margin: 0;
 }
 
 .time {
@@ -47,10 +50,11 @@ body {
 	min-width: 100px;
 	min-height: 100px;
 	font-size: 50px;
+	border: thin solid white;
+	margin: 0;
 }
 
 .score {
-	display: block;
 	min-width: 100px;
 	min-height: 100px;
 	background: white;
@@ -58,10 +62,10 @@ body {
 	font-size: 100px;
 }
 
-input {
+input, select, output {
 	display: inline;
-	min-width: 1em;
-	max-width: 100%;
+	width: 1em;
+	width: 100%;
 	border: none;
 	color: inherit;
 	background: inherit;
@@ -72,16 +76,13 @@ input[type=checkbox] {
 	display: block;
 }
 
-#left .timeouts {
+#team1 .timeouts {
 	float: left;
+	display: inline;
 }
 
-#right .timeouts {
+#team2 .timeouts {
 	float: right;
-}
-
-input[type=button] {
-	border: initial;
 }
 
 .timeouts {
@@ -97,7 +98,7 @@ function startJam() {
 
 function updateTeam(t) {
 	var team = document.getElementById(t);
-	team.getElementsByClassName("name")[0].value = localStorage[t + "Name"];
+	team.getElementsByClassName("name")[0].value = localStorage[t];
 	team.getElementsByClassName("score")[0].value = localStorage[t + "Score"];
 	var to = team.getElementsByClassName("to");
 	for (var i = 0; i < to.length; i++) {
@@ -113,8 +114,8 @@ function formatTime(t) {
 }
 
 function updateDisplay() {
-	updateTeam("left");
-	updateTeam("right");
+	updateTeam("team1");
+	updateTeam("team2");
 
 	var p = document.getElementById("period");
 	p.getElementsByClassName("number")[0].value = "Period " + localStorage.period;
@@ -171,28 +172,30 @@ function updateScore(e, n) {
 	if (localStorage[id] < 0) {
 		localStorage[id] = 0;
 	}
+	updateDisplay();
 }
 
 function resetTeam(t, name) {
+	localStorage[t] = name;
 	localStorage[t + "Score"] = 0;
-	localStorage[t + "Name"] = name;
 	localStorage[t + "Timeouts"] = 3;
 	localStorage[t + "OfficialReview"] = true;
 }
 
 function reset() {
-	resetTeam("left", "Home Team/High Seed");
-	resetTeam("right", "Visiting Team/Low Seed");
+	resetTeam("team1", "Home Team/High Seed");
+	resetTeam("team2", "Visiting Team/Low Seed");
 	localStorage.period = 1;
 	localStorage.jam = 1;
 	localStorage.periodTime = 30 * 60;
 	localStorage.jamTime = 120;
 	localStorage.lineupTime = 30;
+	updateDisplay();
 }
 
 function updateField() {
-	console.log(this);
-	
+	localStorage[this.id] = this.value;
+	updateDisplay();
 }
 
 function interactiveReset() {
@@ -203,87 +206,93 @@ function interactiveReset() {
 }
 
 function init() {
-	if (!localStorage.leftName) {
+	if (!localStorage.team1) {
 		reset();
 	}
 
 	if (document.location.hash == "#display") {
-		var css = document.styleSheets[0].rules;
-		for (var i in css) {
-			if (css[i].selectorText == ".control") {
-				css[i].style.display = "none";
-			}
+		var controls = document.getElementsByClassName("control");
+		for (var i = 0; i < controls.length; i++) {
+			controls[i].style.display = "none";
 		}
 		document.getElementsByTagName("body")[0].style.background = "black";
 		document.getElementsByTagName("body")[0].style.color = "white";
+		window.setInterval(updateDisplay, 100);
 	} else {
 		var inputs = document.getElementsByTagName("input");
-		for (var i = 0; i < inputs.size; i++) {
+		for (var i = 0; i < inputs.length; i++) {
 			inputs[i].oninput = updateField;
 		}
 	}
 
 	updateDisplay();
-	timer = window.setInterval(updateDisplay, 100);
 }
 </script>
 </head>
 <body onload="init();">
 <div class="control">Open the <a href="#display" target="_blank">display</a> in a new window.<br></div>
 
-<div id="left">
-	<input type="text" class="name">
-	<input type="text" class="score">
+<div id="team1">
+	<output class="name" id="team1Name"></output>
+	<input type="text" class="score" id="team1Score">
 	<span class="timeouts">
 		<input type="checkbox" class="to">
 		<input type="checkbox" class="to">
 		<input type="checkbox" class="to">
 		<input type="checkbox" class="or">
 	</span>
+	<label class="control">Jammer: </label><select class="jammer"></select>
 	<span class="control">
-		<a onclick="updateScore(this, -1)">-1</a>
-		<a onclick="updateScore(this, 1)">+1</a>
+		<button onclick="updateScore(this, -1)">-1</button>
+		<button onclick="updateScore(this, 1)">+1</button>
 	</span>
 </div>
 
-<div id="right">
-	<input type="text" class="name">
-	<input type="text" class="score">
+<div id="team2">
+	<output class="name" id="team2Name"></output>
+	<input type="text" class="score" id="team2Score">
 	<span class="timeouts">
 		<input type="checkbox" class="to">
 		<input type="checkbox" class="to">
 		<input type="checkbox" class="to">
 		<input type="checkbox" class="or">
 	</span>
+	<label class="control">Jammer: </label><select class="jammer"></select>
 	<span class="control">
-		<a onclick="updateScore(this, -1)">-1</a>
-		<a onclick="updateScore(this, 1)">+1</a>
+		<button onclick="updateScore(this, -1)">-1</button>
+		<button onclick="updateScore(this, 1)">+1</button>
 	</span>
 </div>
 
 <div id="timing">
 	<div id="period">
-		<input type="button" class="control" value="-" onclick="decPeriod();">
-		<input class="number">
-		<input type="button" class="control" value="+" onclick="incPeriod();">
-		<input class="time">
+		<h2>
+			<button class="control" onclick="decPeriod();">-</button>
+			<output class="number"></output><button class="control" onclick="incPeriod();">+</button>
+		</h2>
+		<output class="time"></output>
 	</div>
 
 	<div id="jam">
-		<input type="button" class="control" value="-" onclick="decJam();">
-		<input class="number">
-		<input type="button" class="control" value="+" onclick="incJam();">
-		<input class="time">
+		<h2>
+			<button class="control" onclick="decJam();">-</button>
+			<output class="number"></output><button class="control" onclick="incJam();">+</button>
+		</h2>
+		<output class="time"></output>
 	</div>
 </div>
 
 <div class="control">
-	<input type="button" value="Start Jam" onclick="startJam();">
-	<input type="button" value="End Jam" onclick="endJam();">
-	<input type="button" value="Time Out" onclick="timeOut();">
-	<input type="button" value="Reset Everything" onclick="interactiveReset();">
+	<button onclick="startJam();">Start Jam</button>
+	<button onclick="endJam();">End Jam</button>
+	<button onclick="timeOut();">Time Out</button>
+	<button onclick="interactiveReset();">Reset</button>
 </div>
 
+<div id="editTeams">
+	<input type="select">
+	</input>
 </div>
+
 </body>
 </html>
