@@ -20,6 +20,7 @@ body {
 
 #left, #right {
 	display: inline-block;
+	max-width: 45%;
 }
 
 #left {
@@ -39,29 +40,48 @@ body {
 	font-size: 100px;
 }
 
+input {
+	display: inline;
+	min-width: 1em;
+	max-width: 100%;
+	border: none;
+	color: inherit;
+	background: inherit;
+	text-align: center;
+}
+
+.timeouts {
+	display: block;
+}
+
 </style>
 <script>
+function updateTeam(t) {
+	var team = document.getElementById(t);
+	team.getElementsByClassName("name")[0].value = localStorage[t + "Name"];
+	team.getElementsByClassName("score")[0].value = localStorage[t + "Score"];
+}
+
 function updateDisplay() {
-	var left = document.getElementById("left");
-	left.getElementsByClassName("name")[0].innerHTML = localStorage.leftName;
-	left.getElementsByClassName("score")[0].innerHTML = localStorage.leftScore;
-
-	var right = document.getElementById("right");
-	right.getElementsByClassName("name")[0].innerHTML = localStorage.rightName;
-	right.getElementsByClassName("score")[0].innerHTML = localStorage.rightScore;
-
+	updateTeam("left");
+	updateTeam("right");
 	timer = window.setInterval(updateDisplay, 500);
 }
 
-function updateScore(e, n) {
+function getTeam(e) {
 	var id = e.id;
 	while (!id) {
 		e = e.parentElement;
 		id = e.id;
 	}
-	localStorage[id + "Score"] = parseInt(localStorage[id + "Score"]) + parseInt(n);
-	if (localStorage[id + "Score"] < 0) {
-		localStorage[id + "Score"] = 0;
+	return id;
+}
+
+function updateScore(e, n) {
+	var id = getTeam(e) + "Score";
+	localStorage[id] = parseInt(localStorage[id]) + parseInt(n);
+	if (localStorage[id] < 0) {
+		localStorage[id] = 0;
 	}
 }
 
@@ -73,8 +93,13 @@ function reset() {
 	localStorage.rightName = "Visiting Team/Low Seed";
 }
 
-function editTeamName() {
+function editField() {
 	console.log(this);
+}
+
+function updateField() {
+	console.log(this);
+	
 }
 
 function init() {
@@ -92,9 +117,11 @@ function init() {
 		document.getElementsByTagName("body")[0].style.background = "black";
 		document.getElementsByTagName("body")[0].style.color = "white";
 	} else {
-		var names = document.getElementsByClassName("name");
-		for (var i = 0; i < names.size; i++) {
-			names[i].onclick = editTeamName;
+		var inputs = document.getElementsByTagName("input");
+		for (var i = 0; i < inputs.size; i++) {
+			inputs[i].onclick = editField;
+			//inputs[i].onchange = updateField;
+			inputs[i].oninput = updateField;
 		}
 	}
 
@@ -106,8 +133,14 @@ function init() {
 <div class="control">Open the <a href="#display" target="_blank">display</a> in a new window.<br></div>
 
 <div id="left">
-<span class="name">Home Team/High Seed</span>
-<span class="score"></span>
+<input type="text" class="name"></input>
+<span class="timeouts">
+	<input type="checkbox" class="to"></input>
+	<input type="checkbox" class="to"></input>
+	<input type="checkbox" class="to"></input>
+	<input type="checkbox" class="or"></input>
+</span>
+<input type="text" class="score"></input>
 <span class="control">
 	<a class="control" onclick="updateScore(this, -1)">-1</a>
 	<a class="control" onclick="updateScore(this, 1)">+1</a>
@@ -115,8 +148,14 @@ function init() {
 </div>
 
 <div id="right">
-<span class="name">Visiting Team/Low Seed</span>
-<span class="score"></span>
+<input type="text" class="name"></input>
+<span class="timeouts">
+	<input type="checkbox" class="to"></input>
+	<input type="checkbox" class="to"></input>
+	<input type="checkbox" class="to"></input>
+	<input type="checkbox" class="or"></input>
+</span>
+<input type="text" class="score"></input>
 <span class="control">
 	<a class="control" onclick="updateScore(this, -1)">-1</a>
 	<a class="control" onclick="updateScore(this, 1)">+1</a>
@@ -124,9 +163,9 @@ function init() {
 </div>
 
 <div id="timing">
-<span id="periodTime"></span>
-<span id="jamTime"></span>
-<span id="lineupTime"></span>
+<input id="periodTime"></input>
+<input id="jamTime"></input>
+<input id="lineupTime"></input>
 </div>
 
 <span class="control">
