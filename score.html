@@ -3,6 +3,34 @@
 <head>
 <title>Scoreboard</title>
 <style type="text/css">
+#editTeams {
+	display: none;
+	position: fixed;
+	left: 25%;
+	width: 50%;
+	height: 75%;
+	top: 12.5%;
+	background: darkgray;
+}
+
+table {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+td input[type=text] {
+	background: white;
+	color: black;
+}
+
+td.number, td.number input[type=text] {
+	width: 4em;
+}
+
+td.name {
+	text-align: left;
+}
+
 .control {
 	display: inline;
 }
@@ -133,6 +161,7 @@ function updateTeam(t) {
 
 	team.getElementsByClassName("name")[0].value = teamInfo.name;
 	team.getElementsByClassName("score")[0].value = localStorage[t + "Score"];
+	team.getElementsByClassName("jammer")[0].value = localStorage[t + "Jammer"];
 
 	var to = team.getElementsByClassName("to");
 	for (var i = 0; i < to.length; i++) {
@@ -249,17 +278,111 @@ function interactiveReset() {
 	updateDisplay();
 }
 
+function addTeamsToSelect(select) {
+	var teams = JSON.parse(localStorage.teams);
+	for (var i = 0; i < teams.length; i++) {
+		var o = document.createElement("option");
+		o.value = i;
+		o.innerHTML = teams[i].name;
+		o.onselect = setTeam;
+		select.appendChild(o);
+	}
+}
+
+function updateRoster() {
+}
+
+function addRow(roster, rowNumber, rosterNumber, rosterName) {
+	var tdNumber = document.createElement("td");
+	var inputNumber = document.createElement("input");
+	inputNumber.id = "rosterNumber" + rowNumber;
+	inputNumber.type = "text";
+	inputNumber.value = rosterNumber;
+	inputNumber.onchange = updateRoster;
+	tdNumber.appendChild(inputNumber);
+
+	var tdName = document.createElement("td");
+	var inputName = document.createElement("input");
+	inputName.id = "rosterName" + rowNumber;
+	inputName.type = "text";
+	inputName.value = rosterName;
+	inputNumber.onchange = updateRoster;
+	tdName.appendChild(inputName);
+
+	var tr = document.createElement("tr");
+	tr.appendChild(tdNumber);
+	tr.appendChild(tdName);
+	roster.appendChild(tr);
+}
+
+function editTeam() {
+	var team = this.value ? this.value : 0;
+	var teams = JSON.parse(localStorage.teams);
+	var form = document.getElementById("editTeams");
+
+	var name = document.getElementById("teamName");
+	name.innerHTML = teams[team].name;
+	var roster = form.getElementsByTagName("table")[0];
+	roster.innerHTML = '<tr><th>#</th><th>Name</th></tr>';
+	for (var i = 0; i < teams[team].players.length; i++) {
+		addRow(roster, i, teams[team].players[i].number, teams[team].players[i].name);
+	}
+	addRow(roster, teams[team].players.length, "", "");
+}
+
 function editTeams() {
+	var form = document.getElementById("editTeams");
+	if (form.style.display == "block") {
+		form.style.display = "none";
+		return;
+	}
+
+	form.style.display = "block";
 	var t = [
-		{ name: "Home Team" },
-		{ name: "Visitor" },
+		{ name: "Home Team", players: [
+			{ number: '1', name: 'In Your Hearts' },
+			{ number: '2', name: 'The Shit' },
+		] },
+		{ name: "Visitor", players: [
+			{ number: '10', name: 'Tenor' },
+			{ number: '20', name: 'Twenty' },
+		] },
 	];
 	localStorage.teams = JSON.stringify(t);
+
+	var select = form.getElementsByTagName("select")[0];
+	addTeamsToSelect(select);
+	var add = document.createElement("option");
+	add.value = "add";
+	add.innerHTML = "New Team";
+	select.appendChild(add);
+	select.onchange = editTeam;
+
+	editTeam();
+}
+
+function setJammers(team) {
+	var teams = JSON.parse(localStorage.teams);
+	var jammers = document.getElementById("team" + team + "Jammer");
+	jammers.innerHTML = '';
+	for (var i = 0; teams[localStorage["team" + team]].players.length; i++) {
+		var o = document.createElement("option");
+		o.value = teams[localStorage["team" + team]].players[i].name;
+		o.innerHTML = teams[localStorage["team" + team]].players[i].number;
+		jammers.appendChild(o);
+	}
 }
 
 function setTeam() {
-	console.log(this);
-	console.log(this.value);
+	if (this.value == "edit") {
+		editTeams();
+		/* set the value to whatever the last edit was */
+		return;
+	}
+	
+	var t = getTeam(this);
+	localStorage[t] = this.value;
+	setJammers(t);
 }
 
 function init() {
@@ -294,28 +417,21 @@ function init() {
 			displays[i].style.display = "none";
 		}
 
-		if (!localStorage.teams) {
+		//if (!localStorage.teams) {
 			editTeams();
-		}
+		//}
 
-		var teams = JSON.parse(localStorage.teams);
 		var teamSelects = document.getElementsByClassName("teamSelect");
 		for (var i = 0; i < teamSelects.length; i++) {
-			for (var j = 0; j < teams.length; j++) {
-				var o = document.createElement("option");
-				o.value = teams[j].name;
-				o.innerHTML = teams[j].name;
-				if (j == localStorage["team" + (i+1)]) {
-					o.selected = "selected";
-				}
-				o.onselect = setTeam;
-			}
+			addTeamsToSelect(teamSelects[i]);
 			var edit = document.createElement("option");
 			edit.value = "edit";
 			edit.innerHTML = "Edit Teams";
 			teamSelects[i].appendChild(edit);
 			teamSelects[i].onchange = setTeam;
 		}
+		setJammers(1);
+		setJammers(2);
 	}
 
 	updateDisplay();
@@ -326,7 +442,7 @@ function init() {
 <div class="control">Open the <a href="#display" target="_blank">display</a> in a new window.<br></div>
 
 <div id="team1">
-	<select class="teamSelect" id="team1Select"></select>
+	<select class="teamSelect"></select>
 	<output class="display name" id="team1Name"></output><br>
 
 	<div class="timeoutsAndScore">
@@ -348,7 +464,7 @@ function init() {
 </div>
 
 <div id="team2">
-	<select class="teamSelect" id="team2Select"></select>
+	<select class="teamSelect"></select>
 	<output class="display name" id="team2Name"></output>
 
 	<div class="timeoutsAndScore">
@@ -398,6 +514,11 @@ function init() {
 
 <div id="editTeams">
 	<select></select>
+	<button onclick="editTeams();">Done</button><br>
+	<label for="name">Name: </label><input type="text" id="teamName">
+	<table>
+	<tr><th class="number">#</th><th class="name">Name</th></tr>
+	</table>
 </div>
 
 </body>
