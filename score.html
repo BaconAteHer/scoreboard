@@ -139,6 +139,7 @@ function incPeriod() {
 	if (localStorage.period > 2) {
 		localStorage.period = 2;
 	}
+	updateDisplay();
 }
 
 function decPeriod() {
@@ -146,10 +147,12 @@ function decPeriod() {
 	if (localStorage.period < 1) {
 		localStorage.period = 1;
 	}
+	updateDisplay();
 }
 
 function incJam() {
 	localStorage.jam++;
+	updateDisplay();
 }
 
 function decJam() {
@@ -157,6 +160,7 @@ function decJam() {
 	if (localStorage.jam < 1) {
 		localStorage.jam = 1;
 	}
+	updateDisplay();
 }
 
 
@@ -179,7 +183,6 @@ function updateScore(e, n) {
 }
 
 function resetTeam(t) {
-	localStorage[t] = name;
 	localStorage[t + "Score"] = 0;
 	localStorage[t + "Timeouts"] = 3;
 	localStorage[t + "OfficialReview"] = true;
@@ -195,7 +198,6 @@ function reset() {
 	localStorage.periodTime = 30 * 60;
 	localStorage.jamTime = 120;
 	localStorage.lineupTime = 30;
-	updateDisplay();
 }
 
 function updateField() {
@@ -216,6 +218,11 @@ function editTeams() {
 		{ name: "Visitor" },
 	];
 	localStorage.teams = JSON.stringify(t);
+}
+
+function setTeam() {
+	console.log(this);
+	console.log(this.value);
 }
 
 function init() {
@@ -264,8 +271,13 @@ function init() {
 				if (j == localStorage["team" + (i+1)]) {
 					o.selected = "selected";
 				}
-				teamSelects[i].appendChild(o);
+				o.onselect = setTeam;
 			}
+			var edit = document.createElement("option");
+			edit.value = "edit";
+			edit.innerHTML = "Edit Teams";
+			teamSelects[i].appendChild(edit);
+			teamSelects[i].onchange = setTeam;
 		}
 	}
 
