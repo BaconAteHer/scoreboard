@@ -97,12 +97,16 @@ function startJam() {
 
 function updateTeam(t) {
 	var team = document.getElementById(t);
-	team.getElementsByClassName("name")[0].value = localStorage[t];
+	var teamInfo = JSON.parse(localStorage.teams)[localStorage[t]];
+
+	team.getElementsByClassName("name")[0].value = teamInfo.name;
 	team.getElementsByClassName("score")[0].value = localStorage[t + "Score"];
+
 	var to = team.getElementsByClassName("to");
 	for (var i = 0; i < to.length; i++) {
 		to[i].checked = i < localStorage[t + "Timeouts"];
 	}
+
 	team.getElementsByClassName("or")[0].checked = localStorage[t + "OfficialReview"];
 }
 
@@ -174,7 +178,7 @@ function updateScore(e, n) {
 	updateDisplay();
 }
 
-function resetTeam(t, name) {
+function resetTeam(t) {
 	localStorage[t] = name;
 	localStorage[t + "Score"] = 0;
 	localStorage[t + "Timeouts"] = 3;
@@ -182,8 +186,10 @@ function resetTeam(t, name) {
 }
 
 function reset() {
-	resetTeam("team1", "Home Team/High Seed");
-	resetTeam("team2", "Visiting Team/Low Seed");
+	resetTeam("team1");
+	resetTeam("team2");
+	localStorage.team1 = 0;
+	localStorage.team2 = 1;
 	localStorage.period = 1;
 	localStorage.jam = 1;
 	localStorage.periodTime = 30 * 60;
@@ -204,6 +210,14 @@ function interactiveReset() {
 	updateDisplay();
 }
 
+function editTeams() {
+	var t = [
+		{ name: "Home Team" },
+		{ name: "Visitor" },
+	];
+	localStorage.teams = JSON.stringify(t);
+}
+
 function init() {
 	if (!localStorage.team1) {
 		reset();
@@ -214,6 +228,7 @@ function init() {
 		for (var i = 0; i < controls.length; i++) {
 			controls[i].style.display = "none";
 		}
+
 		document.getElementsByTagName("body")[0].style.background = "black";
 		document.getElementsByTagName("body")[0].style.color = "white";
 		window.setInterval(updateDisplay, 100);
@@ -229,6 +244,29 @@ function init() {
 			selects[i].oninput = updateField;
 			selects[i].style.display = "inline";
 		}
+
+		var displays = document.getElementsByClassName("display");
+		for (var i = 0; i < displays.length; i++) {
+			displays[i].style.display = "none";
+		}
+
+		if (!localStorage.teams) {
+			editTeams();
+		}
+
+		var teams = JSON.parse(localStorage.teams);
+		var teamSelects = document.getElementsByClassName("teamSelect");
+		for (var i = 0; i < teamSelects.length; i++) {
+			for (var j = 0; j < teams.length; j++) {
+				var o = document.createElement("option");
+				o.value = teams[j].name;
+				o.innerHTML = teams[j].name;
+				if (j == localStorage["team" + (i+1)]) {
+					o.selected = "selected";
+				}
+				teamSelects[i].appendChild(o);
+			}
+		}
 	}
 
 	updateDisplay();
@@ -239,7 +277,8 @@ function init() {
 <div class="control">Open the <a href="#display" target="_blank">display</a> in a new window.<br></div>
 
 <div id="team1">
-	<output class="name" id="team1Name"></output><br>
+	<select class="teamSelect" id="team1Select"></select>
+	<output class="display name" id="team1Name"></output><br>
 
 	<div class="timeoutsAndScore">
 		<span class="timeouts">
@@ -256,11 +295,12 @@ function init() {
 	<button class="control" onclick="updateScore(this, 1)">+1</button>
 
 	<label class="control" for="team1Jammer">Jammer: </label><select id="team1Jammer"></select>
-	<output class="jammer"></output>
+	<output class="display jammer"></output>
 </div>
 
 <div id="team2">
-	<output class="name" id="team2Name"></output>
+	<select class="teamSelect" id="team2Select"></select>
+	<output class="display name" id="team2Name"></output>
 
 	<div class="timeoutsAndScore">
 		<input type="text" class="score" id="team2Score" disabled>
@@ -279,7 +319,7 @@ function init() {
 	</span>
 
 	<label class="control" for="team2Jammer">Jammer: </label><select id="team2Jammer"></select>
-	<output class="jammer"></output>
+	<output class="display jammer"></output>
 </div>
 
 <div id="timing">
@@ -308,8 +348,7 @@ function init() {
 </div>
 
 <div id="editTeams">
-	<select>
-	</select>
+	<select></select>
 </div>
 
 </body>
