@@ -18,6 +18,19 @@ body {
 	text-align: center;
 }
 
+.timeoutsAndScore {
+	background: white;
+	color: black;
+	border-radius: .5em;
+	margin-bottom: 1em;
+	padding-bottom: 1em;
+}
+
+.timeouts {
+	width: 1em;
+	display: inline;
+}
+
 #team1, #team2, #period, #jam {
 	display: inline-block;
 	width: 45%;
@@ -44,49 +57,36 @@ body {
 	color: black;
 	margin: 0;
 	border-radius: .5em;
+	display: block;
 }
 
 .time {
 	display: block;
-	min-width: 100px;
+	width: 100%;
+	//min-width: 100px;
 	min-height: 100px;
 	font-size: 50px;
 	margin: 0;
 }
 
 .score {
-	background: white;
-	color: black;
 	font-size: 100px;
-	border-radius: .25em;
 }
 
-input, select, output {
+input[type=text], output {
 	display: inline;
-	width: 1em;
-	width: 100%;
-	border: none;
-	color: inherit;
-	background: inherit;
+	max-width: 50%;
+	border: inherit;
 	text-align: center;
+	background: inherit;
+}
+
+select {
+	display: none;
 }
 
 input[type=checkbox] {
 	display: block;
-}
-
-#team1 .timeouts {
-	float: left;
-	display: inline;
-}
-
-#team2 .timeouts {
-	float: right;
-}
-
-.timeouts {
-	display: inline;
-	
 }
 
 </style>
@@ -223,6 +223,12 @@ function init() {
 			inputs[i].oninput = updateField;
 			inputs[i].disabled = false;
 		}
+
+		var selects = document.getElementsByTagName("select");
+		for (var i = 0; i < selects.length; i++) {
+			selects[i].oninput = updateField;
+			selects[i].style.display = "inline";
+		}
 	}
 
 	updateDisplay();
@@ -235,33 +241,45 @@ function init() {
 <div id="team1">
 	<output class="name" id="team1Name"></output><br>
 
+	<div class="timeoutsAndScore">
+		<span class="timeouts">
+			<input type="checkbox" class="to" disabled>
+			<input type="checkbox" class="to" disabled>
+			<input type="checkbox" class="to" disabled>
+			<input type="checkbox" class="or" disabled>
+		</span>
+
+		<input type="text" class="score" id="team1Score" disabled>
+	</div>
+
 	<button class="control" onclick="updateScore(this, -1)">-1</button>
-	<input type="text" class="score" id="team1Score" disabled>
 	<button class="control" onclick="updateScore(this, 1)">+1</button>
 
-	<span class="timeouts">
-		<input type="checkbox" class="to" disabled>
-		<input type="checkbox" class="to" disabled>
-		<input type="checkbox" class="to" disabled>
-		<input type="checkbox" class="or" disabled>
-	</span>
-	<label class="control">Jammer: </label><select class="jammer"></select>
+	<label class="control" for="team1Jammer">Jammer: </label><select id="team1Jammer"></select>
+	<output class="jammer"></output>
 </div>
 
 <div id="team2">
 	<output class="name" id="team2Name"></output>
-	<input type="text" class="score" id="team2Score" disabled>
-	<span class="timeouts">
-		<input type="checkbox" class="to" disabled>
-		<input type="checkbox" class="to" disabled>
-		<input type="checkbox" class="to" disabled>
-		<input type="checkbox" class="or" disabled>
-	</span>
-	<label class="control">Jammer: </label><select class="jammer"></select>
+
+	<div class="timeoutsAndScore">
+		<input type="text" class="score" id="team2Score" disabled>
+
+		<span class="timeouts">
+			<input type="checkbox" class="to" disabled>
+			<input type="checkbox" class="to" disabled>
+			<input type="checkbox" class="to" disabled>
+			<input type="checkbox" class="or" disabled>
+		</span>
+	</div>
+
 	<span class="control">
 		<button onclick="updateScore(this, -1)">-1</button>
 		<button onclick="updateScore(this, 1)">+1</button>
 	</span>
+
+	<label class="control" for="team2Jammer">Jammer: </label><select id="team2Jammer"></select>
+	<output class="jammer"></output>
 </div>
 
 <div id="timing">
@@ -290,8 +308,8 @@ function init() {
 </div>
 
 <div id="editTeams">
-	<input type="select">
-	</input>
+	<select>
+	</select>
 </div>
 
 </body>
