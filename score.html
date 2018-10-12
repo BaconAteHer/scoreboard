@@ -91,8 +91,39 @@ input[type=checkbox] {
 
 </style>
 <script>
+function tickTime() {
+	//if (!localStorage.timeOut) {
+		localStorage.periodTime--;
+	//}
+
+	if (localStorage.jamTime == 0) {
+		localStorage.lineupTime++;
+	} else {
+		localStorage.jamTime--;
+	}
+
+	updateDisplay();
+}
+
 function startJam() {
-	
+	if (window.jamTimer) {
+		
+	} else {
+		window.jamTimer = setInterval(tickTime, 1000);
+	}
+	localStorage.timeOut = false;
+	localStorage.jamTime = 120;
+	localStorage.lineupTime = 0;
+}
+
+function endJam() {
+	localStorage.jamTime = 0;
+	localStorage.jam++;
+	localStorage.lineupTime = 0;
+}
+
+function timeOut() {
+	localStorage.timeOut = true;
 }
 
 function updateTeam(t) {
@@ -111,7 +142,7 @@ function updateTeam(t) {
 }
 
 function formatTime(t) {
-	var minutes = t / 60;
+	var minutes = parseInt(t / 60);
 	var seconds = t % 60;
 	return minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
 }
@@ -129,7 +160,7 @@ function updateDisplay() {
 		j.getElementsByClassName("number")[0].value = "Jam " + localStorage.jam;
 		j.getElementsByClassName("time")[0].value = formatTime(localStorage.jamTime);
 	} else {
-		j.getElementsByClassName("number")[0].value = "Lineup for Jam " + localStorage.jam;
+		j.getElementsByClassName("number")[0].value = /* localStorage.timeOut ? "Timeout" : */ "Lineup for Jam " + localStorage.jam;
 		j.getElementsByClassName("time")[0].value = formatTime(localStorage.lineupTime);
 	}
 }
@@ -189,6 +220,10 @@ function resetTeam(t) {
 }
 
 function reset() {
+	if (window.jamTimer) {
+		clearInterval(window.jamTimer);
+		window.jamTimer = undefined;
+	}
 	resetTeam("team1");
 	resetTeam("team2");
 	localStorage.team1 = 0;
@@ -196,8 +231,8 @@ function reset() {
 	localStorage.period = 1;
 	localStorage.jam = 1;
 	localStorage.periodTime = 30 * 60;
-	localStorage.jamTime = 120;
-	localStorage.lineupTime = 30;
+	localStorage.jamTime = 0;
+	localStorage.lineupTime = 0;
 }
 
 function updateField() {
