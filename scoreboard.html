@@ -44,13 +44,12 @@ table {
 	margin-right: auto;
 }
 
-input {
+input, output {
+	background: inherit;
+	color: inherit;
 	text-align: center;
-}
-
-td input[type=text] {
-	background: white;
-	color: black;
+	font: inherit;
+	border: none;
 }
 
 td.number, td.number input[type=text] {
@@ -131,7 +130,7 @@ body {
 	//display: none;
 }
 
-#nextgame {
+#nextgame, #timetoderby {
 	clear: both;
 	display: block;
 }
@@ -240,11 +239,11 @@ function updateDisplay() {
 		j.getElementsByClassName("time")[0].value = formatTime(localStorage.lineupTime);
 	}
 
-	var n = document.getElementById("nextgame");
+	var ttd = document.getElementById("timeToDerby");
 	var date = new Date();
-	var time = 60 * (date.getHours() * 60 + date.getMinutes()) + date.getSeconds();
+	var time = 10 * (60 * (date.getHours() * 60 + date.getMinutes()) + date.getSeconds());
 	if (localStorage.nextgame > time) {
-		n.getElementsByTagName("output")[0].value = formatTime(localStorage.nextgame - time);
+		ttd.getElementsByTagName("output")[0].value = formatTime(localStorage.nextgame - time);
 	}
 }
 
@@ -260,7 +259,7 @@ function setJam(e) {
 
 function setNextGame(e) {
 	debugger;
-	localStorage.nextgame = 60 * (e.valueAsDate.getUTCHours() * 60 + e.valueAsDate.getUTCMinutes());
+	localStorage.nextgame = 600 * (e.valueAsDate.getUTCHours() * 60 + e.valueAsDate.getUTCMinutes());
 	updateDisplay();
 }
 
@@ -517,7 +516,7 @@ function init() {
 			<input type="checkbox" class="or" disabled>
 		</span>
 
-		<input type="text" class="score" id="team1Score" disabled>
+		<input type="number" class="score" id="team1Score" disabled value="0">
 	</div>
 
 	<button class="control" onclick="updateScore(this, -1)">-1</button>
@@ -532,7 +531,7 @@ function init() {
 	<output class="display name" id="team2Name"></output>
 
 	<div class="timeoutsAndScore">
-		<input type="text" class="score" id="team2Score" disabled>
+		<input type="number" class="score" id="team2Score" disabled value="0">
 
 		<span class="timeouts">
 			<input type="checkbox" class="to" disabled>
@@ -562,14 +561,16 @@ function init() {
 		<output type="time" class="time"></output>
 	</div>
 
-	<div id="nextgame">
-		<h2>Time to Derby</h2>
-		<input type="time" class="control time" onchange="setNextGame(this);"></input>
-		<output></output>
+	<div id="nextgame" class="control">
+		<h2>Next Game</h2>
+		<input type="time" class="time" onchange="setNextGame(this);"></input>
+	</div>
+
+	<div id="timeToDerby">
+		<h2>Time To Derby</h2>
+		<output type="time" class="time"></output>
 	</div>
 </div>
-
-<div><hr></div>
 
 <div class="control">
 	<button onclick="startJam();">Start Jam</button>
