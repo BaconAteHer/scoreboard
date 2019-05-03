@@ -6,7 +6,7 @@
 <!--
 # MIT License
 #
-# Copyright (c) 2018 Jakob "Bacon Ate Her" Kaivo <bacon@ateher.com>
+# Copyright (c) 2018-2019 Jakob "Bacon Ate Her" Kaivo <bacon@ateher.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -443,10 +443,6 @@ function init() {
 			displays[i].style.display = "none";
 		}
 
-		//if (!localStorage.teams) {
-			editTeams();
-		//}
-
 		var teamSelects = document.getElementsByClassName("teamSelect");
 		for (var i = 0; i < teamSelects.length; i++) {
 			addTeamsToSelect(teamSelects[i]);
@@ -539,6 +535,7 @@ function init() {
 </div>
 
 <div id="editTeams">
+	Edit Roster For:
 	<select></select>
 	<button onclick="editTeams();">Done</button><br>
 	<label for="name">Name: </label><input type="text" id="teamName">
