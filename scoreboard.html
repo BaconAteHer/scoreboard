@@ -239,6 +239,13 @@ function updateDisplay() {
 		//j.getElementsByTagName("input")[0].value = localStorage.timeOut == 1 ? "Timeout" : "Lineup for Jam " + localStorage.jam;
 		j.getElementsByClassName("time")[0].value = formatTime(localStorage.lineupTime);
 	}
+
+	var n = document.getElementById("nextgame");
+	var date = new Date();
+	var time = 60 * (date.getHours() * 60 + date.getMinutes()) + date.getSeconds();
+	if (localStorage.nextgame > time) {
+		n.getElementsByTagName("output")[0].value = formatTime(localStorage.nextgame - time);
+	}
 }
 
 function setPeriod(e) {
@@ -248,6 +255,12 @@ function setPeriod(e) {
 
 function setJam(e) {
 	localStorage.jam = e.value;
+	updateDisplay();
+}
+
+function setNextGame(e) {
+	debugger;
+	localStorage.nextgame = 60 * (e.valueAsDate.getUTCHours() * 60 + e.valueAsDate.getUTCMinutes());
 	updateDisplay();
 }
 
@@ -551,9 +564,12 @@ function init() {
 
 	<div id="nextgame">
 		<h2>Time to Derby</h2>
-		<input type="time" class="time" onchange="setNextGame(this);"></output>
+		<input type="time" class="control time" onchange="setNextGame(this);"></input>
+		<output></output>
 	</div>
 </div>
+
+<div><hr></div>
 
 <div class="control">
 	<button onclick="startJam();">Start Jam</button>
