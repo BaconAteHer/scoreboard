@@ -44,6 +44,10 @@ table {
 	margin-right: auto;
 }
 
+input {
+	text-align: center;
+}
+
 td input[type=text] {
 	background: white;
 	color: black;
@@ -123,6 +127,15 @@ body {
 	margin: 0;
 }
 
+#period, #jam {
+	//display: none;
+}
+
+#nextgame {
+	clear: both;
+	display: block;
+}
+
 .score {
 	font-size: 100px;
 }
@@ -141,6 +154,12 @@ select {
 
 input[type=checkbox] {
 	display: block;
+}
+
+input[type=number] {
+	max-width: 2em;
+	border: none;
+	font: inherit;
 }
 
 </style>
@@ -201,7 +220,7 @@ function formatTime(t) {
 	var minutes = parseInt(t / 600);
 	var seconds = parseInt((t - minutes * 600) / 10);
 	var ds = t % 10;
-	return minutes + ":" + (seconds < 10 ? "0" : "") + seconds + "." + ds;
+	return minutes + ":" + (seconds < 10 ? "0" : "") + seconds; // + "." + ds;
 }
 
 function updateDisplay() {
@@ -209,17 +228,27 @@ function updateDisplay() {
 	updateTeam("team2");
 
 	var p = document.getElementById("period");
-	p.getElementsByClassName("number")[0].value = "Period " + localStorage.period;
+	p.getElementsByTagName("input")[0].value = localStorage.period;
 	p.getElementsByClassName("time")[0].value = formatTime(localStorage.periodTime);
 
 	var j = document.getElementById("jam");
 	if (localStorage.jamTime > 0) {
-		j.getElementsByClassName("number")[0].value = "Jam " + localStorage.jam;
+		j.getElementsByTagName("input")[0].value = localStorage.jam;
 		j.getElementsByClassName("time")[0].value = formatTime(localStorage.jamTime);
 	} else {
-		j.getElementsByClassName("number")[0].value = localStorage.timeOut == 1 ? "Timeout" : "Lineup for Jam " + localStorage.jam;
+		//j.getElementsByTagName("input")[0].value = localStorage.timeOut == 1 ? "Timeout" : "Lineup for Jam " + localStorage.jam;
 		j.getElementsByClassName("time")[0].value = formatTime(localStorage.lineupTime);
 	}
+}
+
+function setPeriod(e) {
+	localStorage.period = e.value;
+	updateDisplay();
+}
+
+function setJam(e) {
+	localStorage.jam = e.value;
+	updateDisplay();
 }
 
 function incPeriod() {
@@ -511,19 +540,18 @@ function init() {
 
 <div id="timing">
 	<div id="period">
-		<h2>
-			<button class="control" onclick="decPeriod();">-</button>
-			<output class="number"></output><button class="control" onclick="incPeriod();">+</button>
-		</h2>
+		<h2>Period <input type="number" min="1" max="2" value="1" onchange="setPeriod(this);"></h2>
 		<output type="time" class="time"></output>
 	</div>
 
 	<div id="jam">
-		<h2>
-			<button class="control" onclick="decJam();">-</button>
-			<output class="number"></output><button class="control" onclick="incJam();">+</button>
-		</h2>
+		<h2>Jam <input type="number" min="1" value="1" onchange="setJam(this);"></h2>
 		<output type="time" class="time"></output>
+	</div>
+
+	<div id="nextgame">
+		<h2>Time to Derby</h2>
+		<input type="time" class="time" onchange="setNextGame(this);"></output>
 	</div>
 </div>
 
