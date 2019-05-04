@@ -248,16 +248,6 @@ function setTeam(n, e) {
 	localStorage["team" + n] = e.value;
 }
 
-function setPeriod(e) {
-	localStorage.period = e.value;
-	updateDisplay();
-}
-
-function setJam(e) {
-	localStorage.jam = e.value;
-	updateDisplay();
-}
-
 function setNextGame(e) {
 	debugger;
 	localStorage.nextgame = 600 * (e.valueAsDate.getUTCHours() * 60 + e.valueAsDate.getUTCMinutes());
