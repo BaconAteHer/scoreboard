@@ -251,7 +251,6 @@ function setTeam(n, e) {
 }
 
 function setNextGame(e) {
-	debugger;
 	localStorage.nextgame = 600 * (e.valueAsDate.getUTCHours() * 60 + e.valueAsDate.getUTCMinutes());
 	updateDisplay();
 }
@@ -263,15 +262,6 @@ function getTeam(e) {
 		id = e.id;
 	}
 	return id;
-}
-
-function updateScore(e, n) {
-	var id = getTeam(e) + "Score";
-	localStorage[id] = parseInt(localStorage[id]) + parseInt(n);
-	if (localStorage[id] < 0) {
-		localStorage[id] = 0;
-	}
-	updateDisplay();
 }
 
 function resetTeam(t) {
@@ -415,7 +405,35 @@ function setTeam() {
 	setJammers(t);
 }
 
+function updateScore(team, score) {
+	document.getElementById("team" + score + "Score").value = score;
+}
+
+function incrementScore(n) {
+	updateScore(n, ++localStorage["team" + n + "Score"]);
+}
+
+function decrementScore(n) {
+	if (localStorage["team" + n + "Score"] > 0) {
+		updateScore(n, --localStorage["team" + n + "Score"]);
+	}
+}
+
+function keyboard(e) {
+	switch (e.which) {
+	case 70 /* f */:	incrementScore(1); break;
+	case 68 /* d */:	decrementScore(1); break;
+	case 74 /* j */:	incrementScore(2); break;
+	case 75 /* k */:	decrementScore(2); break;
+	default:		console.log(e.which); break;
+	}
+}
+
 function init() {
+	document.addEventListener('keyup', (event) => {
+		keyboard(event);
+	}, false);
+
 	if (!localStorage.team1) {
 		reset();
 	}
