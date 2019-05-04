@@ -76,6 +76,7 @@ body {
 }
 
 .timeoutsAndScore {
+	display: table;
 	background: white;
 	color: black;
 	border-radius: .5em;
@@ -84,20 +85,20 @@ body {
 }
 
 .timeouts {
+	display: table-cell;
 	width: 1em;
-	display: inline;
 }
 
-#team1, #team2, #period, #jam {
+#team1, #team2, #period-box, #jam-box {
 	display: inline-block;
 	width: 45%;
 }
 
-#team1, #period {
+#team1, #period-box {
 	float: left;
 }
 
-#team2, #jam {
+#team2, #jam-box {
 	float: right;
 }
 
@@ -136,7 +137,9 @@ body {
 }
 
 .score {
-	font-size: 100px;
+	display: table-cell;
+	width: 3em;
+	font-size: 100px ! important;
 }
 
 input[type=text], output {
@@ -226,11 +229,11 @@ function updateDisplay() {
 	updateTeam("team1");
 	updateTeam("team2");
 
-	var p = document.getElementById("period");
+	var p = document.getElementById("period-box");
 	p.getElementsByTagName("input")[0].value = localStorage.period;
 	p.getElementsByClassName("time")[0].value = formatTime(localStorage.periodTime);
 
-	var j = document.getElementById("jam");
+	var j = document.getElementById("jam-box");
 	if (localStorage.jamTime > 0) {
 		j.getElementsByTagName("input")[0].value = localStorage.jam;
 		j.getElementsByClassName("time")[0].value = formatTime(localStorage.jamTime);
@@ -245,6 +248,10 @@ function updateDisplay() {
 	if (localStorage.nextgame > time) {
 		ttd.getElementsByTagName("output")[0].value = formatTime(localStorage.nextgame - time);
 	}
+}
+
+function setTeam(n, e) {
+	localStorage["team" + n] = e.value;
 }
 
 function setPeriod(e) {
@@ -262,36 +269,6 @@ function setNextGame(e) {
 	localStorage.nextgame = 600 * (e.valueAsDate.getUTCHours() * 60 + e.valueAsDate.getUTCMinutes());
 	updateDisplay();
 }
-
-function incPeriod() {
-	localStorage.period++;
-	if (localStorage.period > 2) {
-		localStorage.period = 2;
-	}
-	updateDisplay();
-}
-
-function decPeriod() {
-	localStorage.period--;
-	if (localStorage.period < 1) {
-		localStorage.period = 1;
-	}
-	updateDisplay();
-}
-
-function incJam() {
-	localStorage.jam++;
-	updateDisplay();
-}
-
-function decJam() {
-	localStorage.jam--;
-	if (localStorage.jam < 1) {
-		localStorage.jam = 1;
-	}
-	updateDisplay();
-}
-
 
 function getTeam(e) {
 	var id = e.id;
@@ -505,7 +482,7 @@ function init() {
 <div class="control">Open the <a href="#display" target="_blank">display</a> in a new window.<br></div>
 
 <div id="team1">
-	<select class="teamSelect"></select>
+	<select class="teamSelect" onchange="setTeam(1, this);"></select>
 	<output class="display name" id="team1Name"></output><br>
 
 	<div class="timeoutsAndScore">
@@ -513,51 +490,45 @@ function init() {
 			<input type="checkbox" class="to" disabled>
 			<input type="checkbox" class="to" disabled>
 			<input type="checkbox" class="to" disabled>
+			<br>
 			<input type="checkbox" class="or" disabled>
 		</span>
 
-		<input type="number" class="score" id="team1Score" disabled value="0">
+		<input type="number" class="score" id="team1Score" disabled value="0" min="0">
 	</div>
 
-	<button class="control" onclick="updateScore(this, -1)">-1</button>
-	<button class="control" onclick="updateScore(this, 1)">+1</button>
-
 	<label class="control" for="team1Jammer">Jammer: </label><select id="team1Jammer"></select>
-	<output class="display jammer"></output>
+	<output class="jammer"></output>
 </div>
 
 <div id="team2">
-	<select class="teamSelect"></select>
+	<select class="teamSelect" onchange="setTeam(2, this);"></select>
 	<output class="display name" id="team2Name"></output>
 
 	<div class="timeoutsAndScore">
-		<input type="number" class="score" id="team2Score" disabled value="0">
+		<input type="number" class="score" id="team2Score" disabled value="0" min="0">
 
 		<span class="timeouts">
 			<input type="checkbox" class="to" disabled>
 			<input type="checkbox" class="to" disabled>
 			<input type="checkbox" class="to" disabled>
+			<br>
 			<input type="checkbox" class="or" disabled>
 		</span>
 	</div>
 
-	<span class="control">
-		<button onclick="updateScore(this, -1)">-1</button>
-		<button onclick="updateScore(this, 1)">+1</button>
-	</span>
-
 	<label class="control" for="team2Jammer">Jammer: </label><select id="team2Jammer"></select>
-	<output class="display jammer"></output>
+	<output class="jammer"></output>
 </div>
 
 <div id="timing">
-	<div id="period">
-		<h2>Period <input type="number" min="1" max="2" value="1" onchange="setPeriod(this);"></h2>
+	<div id="period-box">
+		<h2>Period <input id="period" type="number" min="1" max="2" value="1"></h2>
 		<output type="time" class="time"></output>
 	</div>
 
-	<div id="jam">
-		<h2>Jam <input type="number" min="1" value="1" onchange="setJam(this);"></h2>
+	<div id="jam-box">
+		<h2>Jam <input id="jam" type="number" min="1" value="1"></h2>
 		<output type="time" class="time"></output>
 	</div>
 
